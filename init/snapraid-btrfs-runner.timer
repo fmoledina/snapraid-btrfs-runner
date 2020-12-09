@@ -1,0 +1,10 @@
+[Unit]
+Description=Run snapraid-btrfs-runner
+
+[Timer]
+OnCalendar=daily
+RandomizedDelaySec=5h
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -1,0 +1,6 @@
+[Unit]
+Description=snapraid-btrfs-runner
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/snapraid-btrfs-runner.py -c /etc/snapraid-btrfs-runner.conf
