@@ -33,6 +33,9 @@ Includes basic snapraid-btrfs feature of taking BTRFS snapshots in conjunction w
 sync, scrub, fix, etc.). This script omits access to many underlying snapraid-btrfs options, given its intended 
 use as an unattended automatic snapraid tool.
 
+## TODO
+* Fix cleanup task. Currently this script doesn't actually doing any snapshot cleanup even if configured to do so.
+
 ## Changelog
 ### Unreleased master
 * Initial commit based on snapraid-runner commit 68a03ce
