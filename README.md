@@ -35,6 +35,7 @@ use as an unattended automatic snapraid tool.
 
 ## TODO
 * Fix cleanup task. Currently this script doesn't actually doing any snapshot cleanup even if configured to do so.
+* Provide config options for `--snapper-configs` and `--snapper-configs-file` underlying options in `snapraid-btrfs`.
 
 ## Changelog
 ### Unreleased master
