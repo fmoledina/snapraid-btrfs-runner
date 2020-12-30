@@ -174,7 +174,7 @@ def load_config(args):
     config["scrub"]["enabled"] = (config["scrub"]["enabled"].lower() == "true")
     config["email"]["short"] = (config["email"]["short"].lower() == "true")
     config["snapraid"]["touch"] = (config["snapraid"]["touch"].lower() == "true")
-    #config["snapraid-btrfs"]["pool"] = (config["snapraid-btrfs"]["pool"].lower() == "true")
+    config["snapraid-btrfs"]["pool"] = (config["snapraid-btrfs"]["pool"].lower() == "true")
     config["snapraid-btrfs"]["cleanup"] = (config["snapraid-btrfs"]["cleanup"].lower() == "true")
 
     if args.scrub is not None:
@@ -183,8 +183,8 @@ def load_config(args):
     if args.deletethreshold is not None:
         config["snapraid"]["deletethreshold"] = args.deletethreshold
 
-    # if args.pool is not None:
-    #     config["snapraid-btrfs"]["pool"] = args.pool
+    if args.pool is not None:
+        config["snapraid-btrfs"]["pool"] = args.pool
 
     if args.cleanup is not None:
         config["snapraid-btrfs"]["cleanup"] = args.cleanup
@@ -229,9 +229,9 @@ def main():
                         default="snapraid-btrfs-runner.conf",
                         metavar="CONFIG",
                         help="Configuration file (default: %(default)s)")
-    # parser.add_argument("--no-pool", action='store_false',
-    #                     dest='pool', default=None,
-    #                     help="Do not update/create snapraid-btrfs pool (overrides config")
+    parser.add_argument("--no-pool", action='store_false',
+                        dest='pool', default=None,
+                        help="Do not update/create snapraid-btrfs pool (overrides config")
     parser.add_argument("--no-cleanup", action='store_false',
                         dest='cleanup', default=None,
                         help="Do not clean up snapraid-btrfs snapshots (overrides config")
@@ -335,16 +335,16 @@ def run():
         logging.info("*" * 60)
 
     # pool
-    # if config["snapraid-btrfs"]["pool"]:
-    #     logging.info("Running pool...")
-    #     if len(config["snapraid-btrfs"]["pool-dir"]) > 0:
-    #         snapraid_btrfs_args_extend["pool-dir"] = config["snapraid-btrfs"]["pool-dir"]
-    #     try:
-    #         snapraid_btrfs_command("pool", snapraid_btrfs_args = snapraid_btrfs_args_extend)
-    #     except subprocess.CalledProcessError as e:
-    #         logging.error(e)
-    #         finish(False)
-    #     logging.info("*" * 60)
+    if config["snapraid-btrfs"]["pool"]:
+        logging.info("Running pool...")
+        if len(config["snapraid-btrfs"]["pool-dir"]) > 0:
+            snapraid_btrfs_args_extend["pool-dir"] = config["snapraid-btrfs"]["pool-dir"]
+        try:
+            snapraid_btrfs_command("pool", snapraid_btrfs_args = snapraid_btrfs_args_extend)
+        except subprocess.CalledProcessError as e:
+            logging.error(e)
+            finish(False)
+        logging.info("*" * 60)
 
     # cleanup
     if config["snapraid-btrfs"]["cleanup"]:

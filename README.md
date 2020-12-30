@@ -33,13 +33,13 @@ Includes basic snapraid-btrfs features of taking BTRFS snapshots in conjunction 
 `diff`, `sync`, `cleanup`, and `scrub`). This script omits access to many underlying snapraid-btrfs options, given its intended 
 use as an unattended automatic snapraid tool. Features include:
 * Uses `snapraid-btrfs` for `diff`, `sync`, and `scrub` operations
-* Can run `cleanup` between `sync` and `scrub`
+* Can run `pool` and/or `cleanup` between `sync` and `scrub`
 
 ## TODO
-* Implement `snapraid-btrfs pool`.
+* Nothing for now
 
 ## Changelog
 ### Unreleased master
 * Initial commit based on snapraid-runner commit 68a03ce
-* Added `snapraid-btrfs cleanup` step after `sync`
+* Added optional `snapraid-btrfs pool` and `snapraid-btrfs cleanup` step after `sync`
 * Added config options for for `--snapper-configs` and `--snapper-configs-file` underlying options in snapraid-btrfs.
