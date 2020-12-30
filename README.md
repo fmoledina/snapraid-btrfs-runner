@@ -29,13 +29,16 @@ Includes all the snapraid-runner features:
 * Can send notification emails after each run or only for failures.
 * Can run `scrub` after `sync`
 
-Includes basic snapraid-btrfs feature of taking BTRFS snapshots in conjunction with snapraid operations (i.e. 
-sync, scrub, fix, etc.). This script omits access to many underlying snapraid-btrfs options, given its intended 
-use as an unattended automatic snapraid tool.
+Includes basic snapraid-btrfs features of taking BTRFS snapshots in conjunction with snapraid operations (i.e. 
+`diff`, `sync`, `cleanup`, and `scrub`). This script omits access to many underlying snapraid-btrfs options, given its intended 
+use as an unattended automatic snapraid tool. Features include:
+* Uses `snapraid-btrfs` for `diff`, `sync`, and `scrub` operations
+* Can run `cleanup` between `sync` and `scrub`
 
 ## TODO
-* Fix cleanup task. Currently this script doesn't actually doing any snapshot cleanup even if configured to do so.
+* Implement `snapraid-btrfs pool`.
 
 ## Changelog
 ### Unreleased master
 * Initial commit based on snapraid-runner commit 68a03ce
+* Added `snapraid-btrfs cleanup` step after `sync`

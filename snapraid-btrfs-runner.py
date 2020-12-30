@@ -39,7 +39,7 @@ def tee_log(infile, out_lines, log_level):
     return t
 
 
-def snapraid_btrfs_command(command, snapraid_args={}, snapraid_btrfs_args={}, *, allow_statuscodes=[]):
+def snapraid_btrfs_command(command, *, snapraid_args={}, snapraid_btrfs_args={}, allow_statuscodes=[]):
     """
     Run snapraid-btrfs command
     Raises subprocess.CalledProcessError if errorlevel != 0
@@ -48,8 +48,8 @@ def snapraid_btrfs_command(command, snapraid_args={}, snapraid_btrfs_args={}, *,
                                 "--conf", config["snapraid"]["config"],
                                 "--snapper-path", config["snapper"]["executable"],
                                 "--snapraid-path", config["snapraid"]["executable"]]
-    if len(config["snapraid-btrfs"]["cleanup-algorithm"]) > 0:
-        snapraid_btrfs_arguments.extend(["--cleanup", config["snapraid-btrfs"]["cleanup-algorithm"]])
+    # if len(config["snapraid-btrfs"]["cleanup-algorithm"]) > 0:
+    #     snapraid_btrfs_arguments.extend(["--cleanup", config["snapraid-btrfs"]["cleanup-algorithm"]])
     for (k, v) in snapraid_btrfs_args.items():
         snapraid_btrfs_arguments.extend(["--" + k, str(v)])
     snapraid_arguments = []
@@ -174,6 +174,7 @@ def load_config(args):
     config["scrub"]["enabled"] = (config["scrub"]["enabled"].lower() == "true")
     config["email"]["short"] = (config["email"]["short"].lower() == "true")
     config["snapraid"]["touch"] = (config["snapraid"]["touch"].lower() == "true")
+    #config["snapraid-btrfs"]["pool"] = (config["snapraid-btrfs"]["pool"].lower() == "true")
     config["snapraid-btrfs"]["cleanup"] = (config["snapraid-btrfs"]["cleanup"].lower() == "true")
 
     if args.scrub is not None:
@@ -181,6 +182,9 @@ def load_config(args):
 
     if args.deletethreshold is not None:
         config["snapraid"]["deletethreshold"] = args.deletethreshold
+
+    # if args.pool is not None:
+    #     config["snapraid-btrfs"]["pool"] = args.pool
 
     if args.cleanup is not None:
         config["snapraid-btrfs"]["cleanup"] = args.cleanup
@@ -225,15 +229,18 @@ def main():
                         default="snapraid-btrfs-runner.conf",
                         metavar="CONFIG",
                         help="Configuration file (default: %(default)s)")
+    # parser.add_argument("--no-pool", action='store_false',
+    #                     dest='pool', default=None,
+    #                     help="Do not update/create snapraid-btrfs pool (overrides config")
+    parser.add_argument("--no-cleanup", action='store_false',
+                        dest='cleanup', default=None,
+                        help="Do not clean up snapraid-btrfs snapshots (overrides config")
     parser.add_argument("--no-scrub", action='store_false',
                         dest='scrub', default=None,
                         help="Do not scrub (overrides config)")
     parser.add_argument("-d", "--deletethreshold", type=int,
                         default=None, metavar='N',
                         help="Number of deletes to allow (overrides config)")
-    parser.add_argument("--no-cleanup", action='store_false',
-                        dest='cleanup', default=None,
-                        help="Do not clean up snapraid-btrfs snapshots (overrides config")
     args = parser.parse_args()
 
     if not os.path.exists(args.conf):
@@ -285,13 +292,21 @@ def run():
                       config["snapper"]["executable"])
         finish(False)
 
+    snapraid_btrfs_args_extend = {}
+    # snapraid_args_extend = {}
+
+    if len(config["snapraid-btrfs"]["snapper-configs"]) > 0:
+        snapraid_btrfs_args_extend["snapper-configs"] = config["snapraid-btrfs"]["snapper-configs"]
+    if len(config["snapraid-btrfs"]["snapper-configs-file"]) > 0:
+        snapraid_btrfs_args_extend["snapper-configs-file"] = config["snapraid-btrfs"]["snapper-configs-file"]
+
     if config["snapraid"]["touch"]:
         logging.info("Running touch...")
-        snapraid_btrfs_command("touch")
+        snapraid_btrfs_command("touch", snapraid_btrfs_args = snapraid_btrfs_args_extend)
         logging.info("*" * 60)
 
     logging.info("Running diff...")
-    diff_out = snapraid_btrfs_command("diff", allow_statuscodes=[2])
+    diff_out = snapraid_btrfs_command("diff", snapraid_btrfs_args = snapraid_btrfs_args_extend, allow_statuscodes=[2])
     logging.info("*" * 60)
 
     diff_results = Counter(line.split(" ")[0] for line in diff_out)
@@ -313,7 +328,29 @@ def run():
     else:
         logging.info("Running sync...")
         try:
-            snapraid_btrfs_command("sync")
+            snapraid_btrfs_command("sync", snapraid_btrfs_args = snapraid_btrfs_args_extend)
+        except subprocess.CalledProcessError as e:
+            logging.error(e)
+            finish(False)
+        logging.info("*" * 60)
+
+    # pool
+    # if config["snapraid-btrfs"]["pool"]:
+    #     logging.info("Running pool...")
+    #     if len(config["snapraid-btrfs"]["pool-dir"]) > 0:
+    #         snapraid_btrfs_args_extend["pool-dir"] = config["snapraid-btrfs"]["pool-dir"]
+    #     try:
+    #         snapraid_btrfs_command("pool", snapraid_btrfs_args = snapraid_btrfs_args_extend)
+    #     except subprocess.CalledProcessError as e:
+    #         logging.error(e)
+    #         finish(False)
+    #     logging.info("*" * 60)
+
+    # cleanup
+    if config["snapraid-btrfs"]["cleanup"]:
+        logging.info("Running cleanup...")
+        try:
+            snapraid_btrfs_command("cleanup", snapraid_btrfs_args = snapraid_btrfs_args_extend)
         except subprocess.CalledProcessError as e:
             logging.error(e)
             finish(False)
@@ -321,11 +358,12 @@ def run():
 
     if config["scrub"]["enabled"]:
         logging.info("Running scrub...")
+        snapraid_args_extend = {
+            "percentage": config["scrub"]["percentage"],
+            "older-than": config["scrub"]["older-than"],
+        }
         try:
-            snapraid_btrfs_command("scrub", {
-                "percentage": config["scrub"]["percentage"],
-                "older-than": config["scrub"]["older-than"],
-            })
+            snapraid_btrfs_command("scrub", snapraid_args = snapraid_args_extend, snapraid_btrfs_args = snapraid_btrfs_args_extend)
         except subprocess.CalledProcessError as e:
             logging.error(e)
             finish(False)
@@ -333,6 +371,5 @@ def run():
 
     logging.info("All done")
     finish(True)
-
 
 main()
