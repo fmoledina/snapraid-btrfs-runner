@@ -42,3 +42,4 @@ use as an unattended automatic snapraid tool. Features include:
 ### Unreleased master
 * Initial commit based on snapraid-runner commit 68a03ce
 * Added `snapraid-btrfs cleanup` step after `sync`
+* Added config options for for `--snapper-configs` and `--snapper-configs-file` underlying options in snapraid-btrfs.
