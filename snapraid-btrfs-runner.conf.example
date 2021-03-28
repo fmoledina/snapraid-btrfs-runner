@@ -1,7 +1,8 @@
 [snapraid-btrfs]
 ; path to the snapraid-btrfs executable (e.g. /usr/bin/snapraid-btrfs)
 executable = snapraid-btrfs
-; specify snapper-configs and/or snapper-configs-file as specified in snapraid-btrfs; only one instance of each can be specified in this config
+; optional: specify snapper-configs and/or snapper-configs-file as specified in snapraid-btrfs
+; only one instance of each can be specified in this config
 snapper-configs = 
 snapper-configs-file = 
 ; specify whether snapraid-btrfs should run the pool command after the sync, and optionally specify pool-dir 

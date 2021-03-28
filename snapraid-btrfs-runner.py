@@ -276,20 +276,20 @@ def run():
 
     if not os.path.isfile(config["snapraid"]["executable"]):
         logging.error("The configured snapraid executable \"{}\" does not "
-                      "exist or is not a file".format(
-                          config["snapraid"]["executable"]))
+                        "exist or is not a file".format(
+                            config["snapraid"]["executable"]))
         finish(False)
     if not os.path.isfile(config["snapraid"]["config"]):
         logging.error("Snapraid config does not exist at " +
-                      config["snapraid"]["config"])
+                        config["snapraid"]["config"])
         finish(False)
     if not os.path.isfile(config["snapraid-btrfs"]["executable"]):
         logging.error("Snapraid-btrfs executable does not exist at " +
-                      config["snapraid-btrfs"]["executable"])
+                        config["snapraid-btrfs"]["executable"])
         finish(False)
     if not os.path.isfile(config["snapper"]["executable"]):
         logging.error("Snapper executable does not exist at " +
-                      config["snapper"]["executable"])
+                        config["snapper"]["executable"])
         finish(False)
 
     snapraid_btrfs_args_extend = {}
@@ -313,7 +313,7 @@ def run():
     diff_results = dict((x, diff_results[x]) for x in
                         ["add", "remove", "move", "update"])
     logging.info(("Diff results: {add} added,  {remove} removed,  " +
-                  "{move} moved,  {update} modified").format(**diff_results))
+                    "{move} moved,  {update} modified").format(**diff_results))
 
     if (config["snapraid"]["deletethreshold"] >= 0 and
             diff_results["remove"] > config["snapraid"]["deletethreshold"]):
