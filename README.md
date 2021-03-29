@@ -39,6 +39,9 @@ use as an unattended automatic snapraid tool. Features include:
 * Nothing for now
 
 ## Changelog
+
+### v0.0.1
+* Initial rease
 ### Unreleased master
 * Initial commit based on snapraid-runner commit 68a03ce
 * Added optional `snapraid-btrfs pool` and `snapraid-btrfs cleanup` step after `sync`
