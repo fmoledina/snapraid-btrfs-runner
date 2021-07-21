@@ -275,7 +275,7 @@ def run():
     logging.info("Run started")
     logging.info("=" * 60)
 
-    if not shutil.which(config["snapraid"]["executable"]):
+    if shutil.which(config["snapraid"]["executable"]) is None:
         logging.error("The configured snapraid executable \"{}\" does not "
                         "exist or is not a file".format(
                             config["snapraid"]["executable"]))
@@ -284,11 +284,11 @@ def run():
         logging.error("Snapraid config does not exist at " +
                         config["snapraid"]["config"])
         finish(False)
-    if not shutil.which(config["snapraid-btrfs"]["executable"]):
+    if shutil.which(config["snapraid-btrfs"]["executable"]) is None:
         logging.error("Snapraid-btrfs executable does not exist at " +
                         config["snapraid-btrfs"]["executable"])
         finish(False)
-    if not shutil.which(config["snapper"]["executable"]):
+    if shutil.which(config["snapper"]["executable"]) is None:
         logging.error("Snapper executable does not exist at " +
                         config["snapper"]["executable"])
         finish(False)
