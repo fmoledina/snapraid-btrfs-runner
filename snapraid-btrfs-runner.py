@@ -183,6 +183,9 @@ def load_config(args):
     if args.deletethreshold is not None:
         config["snapraid"]["deletethreshold"] = args.deletethreshold
 
+    if args.ignore_deletethreshold:
+        config["snapraid"]["deletethreshold"] = -1
+
     if args.pool is not None:
         config["snapraid-btrfs"]["pool"] = args.pool
 
@@ -238,9 +241,11 @@ def main():
     parser.add_argument("--no-scrub", action='store_false',
                         dest='scrub', default=None,
                         help="Do not scrub (overrides config)")
+    parser.add_argument("--ignore-deletethreshold", action='store_true',
+                        help="Sync even if configured delete threshold is exceeded (replaces --deletethreshold option)")
     parser.add_argument("-d", "--deletethreshold", type=int,
                         default=None, metavar='N',
-                        help="Number of deletes to allow (overrides config)")
+                        help="Number of deletes to allow (overrides config) (deprecated, use --ignore-deletethreshold)")
     args = parser.parse_args()
 
     if not os.path.exists(args.conf):
@@ -320,6 +325,7 @@ def run():
         logging.error(
             "Deleted files exceed delete threshold of {}, aborting".format(
                 config["snapraid"]["deletethreshold"]))
+        logging.error("Run again with --ignore-deletethreshold to sync anyways")
         finish(False)
 
     if (diff_results["remove"] + diff_results["add"] + diff_results["move"] +
