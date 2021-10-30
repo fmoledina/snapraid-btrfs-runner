@@ -21,6 +21,8 @@ Given the use of the BTRFS filesystem, this script is only supported on Linux. I
   * `snapraid.config`
 * Run the script via `python3 snapraid-btrfs-runner.py`.
 
+See the init dir for a sample systemd timer for automatic scheduled runs.
+
 ## Features
 
 Includes all the snapraid-runner features:
@@ -43,6 +45,13 @@ use as an unattended automatic snapraid tool. Features include:
 * Nothing for now
 
 ## Changelog
+
+### v0.0.2
+
+* Incorporated fixes from the upstream snapraid-runner project:
+  * Add `--ignore-deletethreshold` (by exterrestris, #25)
+  * Add support for scrub `--plan`, replacing `--percentage`
+  * Remove snapraid progress output. Was accidentially introduced with python3 support.
 
 ### v0.0.1
 
