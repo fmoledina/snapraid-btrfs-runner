@@ -156,7 +156,7 @@ def load_config(args):
 
     int_options = [
         ("snapraid", "deletethreshold"), ("logging", "maxsize"),
-        ("scrub", "percentage"), ("scrub", "older-than"), ("email", "maxsize"),
+        ("scrub", "older-than"), ("email", "maxsize"),
     ]
     for section, option in int_options:
         try:
@@ -176,6 +176,10 @@ def load_config(args):
     config["snapraid"]["touch"] = (config["snapraid"]["touch"].lower() == "true")
     config["snapraid-btrfs"]["pool"] = (config["snapraid-btrfs"]["pool"].lower() == "true")
     config["snapraid-btrfs"]["cleanup"] = (config["snapraid-btrfs"]["cleanup"].lower() == "true")
+
+    # Migration
+    if config["scrub"]["percentage"]:
+        config["scrub"]["plan"] = config["scrub"]["percentage"]
 
     if args.scrub is not None:
         config["scrub"]["enabled"] = args.scrub
@@ -364,10 +368,19 @@ def run():
 
     if config["scrub"]["enabled"]:
         logging.info("Running scrub...")
-        snapraid_args_extend = {
-            "percentage": config["scrub"]["percentage"],
-            "older-than": config["scrub"]["older-than"],
-        }
+        # if using new, bad, or full, ignore older-than config option
+        try:
+            snapraid_args_extend = {
+                "plan": int(config["scrub"]["plan"]),
+                "older-than": config["scrub"]["older-than"],
+            }
+        except:
+            snapraid_args_extend = {
+                "plan": config["scrub"]["plan"],
+            }
+            logging.warning(
+                "Ignoring 'older-than' config item with scrub plan '{}'".format(
+                    config["scrub"]["plan"]))
         try:
             snapraid_btrfs_command("scrub", snapraid_args = snapraid_args_extend, snapraid_btrfs_args = snapraid_btrfs_args_extend)
         except subprocess.CalledProcessError as e:

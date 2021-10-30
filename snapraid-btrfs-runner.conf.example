@@ -55,5 +55,7 @@ password =
 [scrub]
 ; set to true to run scrub after sync
 enabled = false
-percentage = 12
+; plan can be 0-100 percent, new, bad, or full
+plan = 12
+; only used for percent scrub plan
 older-than = 10
