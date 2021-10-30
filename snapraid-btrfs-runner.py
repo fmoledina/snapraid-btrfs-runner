@@ -26,11 +26,7 @@ def tee_log(infile, out_lines, log_level):
     """
     def tee_thread():
         for line in iter(infile.readline, ""):
-            line = line.strip()
-            # Do not log the progress display
-            if "\r" in line:
-                line = line.split("\r")[-1]
-            logging.log(log_level, line.strip())
+            logging.log(log_level, line.rstrip())
             out_lines.append(line)
         infile.close()
     t = threading.Thread(target=tee_thread)
@@ -52,7 +48,10 @@ def snapraid_btrfs_command(command, *, snapraid_args={}, snapraid_btrfs_args={},
     #     snapraid_btrfs_arguments.extend(["--cleanup", config["snapraid-btrfs"]["cleanup-algorithm"]])
     for (k, v) in snapraid_btrfs_args.items():
         snapraid_btrfs_arguments.extend(["--" + k, str(v)])
-    snapraid_arguments = []
+    if command == "cleanup":
+        snapraid_arguments = []
+    else:
+        snapraid_arguments = ["--quiet"]
     for (k, v) in snapraid_args.items():
         snapraid_arguments.extend(["--" + k, str(v)])
     p = subprocess.Popen(
