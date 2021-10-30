@@ -9,6 +9,7 @@ It can be run manually, but its main purpose is to be run via cronjob or systemd
 Given the use of the BTRFS filesystem, this script is only supported on Linux. It requires at least python3.7.
 
 ## How to use
+
 * If you don’t already have it, download and install
   [the latest python version](https://www.python.org/downloads/).
 * Clone this repository via git.
@@ -23,24 +24,28 @@ Given the use of the BTRFS filesystem, this script is only supported on Linux. I
 ## Features
 
 Includes all the snapraid-runner features:
+
 * Runs `diff` before `sync` to see how many files were deleted and aborts if
   that number exceeds a set threshold.
 * Can create a size-limited rotated logfile.
 * Can send notification emails after each run or only for failures.
 * Can run `scrub` after `sync`
 
-Includes basic snapraid-btrfs features of taking BTRFS snapshots in conjunction with snapraid operations (i.e. 
-`diff`, `sync`, `cleanup`, and `scrub`). This script omits access to many underlying snapraid-btrfs options, given its intended 
+Includes basic snapraid-btrfs features of taking BTRFS snapshots in conjunction with snapraid operations (i.e.
+`diff`, `sync`, `cleanup`, and `scrub`). This script omits access to many underlying snapraid-btrfs options, given its intended
 use as an unattended automatic snapraid tool. Features include:
+
 * Uses `snapraid-btrfs` for `diff`, `sync`, and `scrub` operations
 * Can run `pool` and/or `cleanup` between `sync` and `scrub`
 
 ## TODO
+
 * Nothing for now
 
 ## Changelog
 
 ### v0.0.1
+
 * Initial release
 * Added optional `snapraid-btrfs pool` and `snapraid-btrfs cleanup` step after `sync`
 * Added config options for for `--snapper-configs` and `--snapper-configs-file` underlying options in snapraid-btrfs.
