@@ -368,17 +368,20 @@ def run():
         logging.info("Running scrub...")
         # if using new, bad, or full, ignore older-than config option
         try:
-            snapraid_args_extend = {
-                "plan": int(config["scrub"]["plan"]),
-                "older-than": config["scrub"]["older-than"],
-            }
-        except:
+            int(config["scrub"]["plan"])
+        except ValueError:
             snapraid_args_extend = {
                 "plan": config["scrub"]["plan"],
             }
-            logging.warning(
-                "Ignoring 'older-than' config item with scrub plan '{}'".format(
-                    config["scrub"]["plan"]))
+            if config["scrub"]["older-than"] > 0:
+                logging.warning(
+                    "Ignoring 'older-than' config item with scrub plan '{}'".format(
+                        config["scrub"]["plan"]))
+        else:
+            snapraid_args_extend = {
+                "plan": config["scrub"]["plan"],
+                "older-than": config["scrub"]["older-than"],
+            }
         try:
             snapraid_btrfs_command("scrub", snapraid_args = snapraid_args_extend, snapraid_btrfs_args = snapraid_btrfs_args_extend)
         except subprocess.CalledProcessError as e:
