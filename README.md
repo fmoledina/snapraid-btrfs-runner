@@ -32,6 +32,7 @@ Includes all the snapraid-runner features:
 * Can create a size-limited rotated logfile.
 * Can send notification emails after each run or only for failures.
 * Can run `scrub` after `sync`
+* Support for healthchecks.io status checks (see `snapraid-btrfs-runner.conf.example`)
 
 Includes basic snapraid-btrfs features of taking BTRFS snapshots in conjunction with snapraid operations (i.e.
 `diff`, `sync`, `cleanup`, and `scrub`). This script omits access to many underlying snapraid-btrfs options, given its intended
