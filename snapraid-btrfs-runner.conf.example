@@ -52,6 +52,11 @@ tls = false
 user =
 password =
 
+[discord]
+enabled = false
+sendon = success,error
+webhook_url =
+
 [scrub]
 ; set to true to run scrub after sync
 enabled = false
